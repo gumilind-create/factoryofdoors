@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Админка — Фабрика Дверей</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Onest:wght@400;500;600&display=swap">
+<style>
+:root{--y:#f4d51c;--ink:#161513;--bg:#f6f1de;--line:#e5dcb8;--muted:#7a7360;--red:#d4261c;--head:"Oswald","Arial Narrow",Impact,sans-serif;--body:"Onest",system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--body)}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{width:100%;min-width:0;padding:12px;border:2px solid var(--ink);border-radius:8px;background:#fff}
+input:focus,select:focus{outline:3px solid var(--y);outline-offset:1px}
+label{display:grid;gap:6px;font-weight:500;font-size:15px}
+h1,h3{font-family:var(--head);text-transform:uppercase;margin:0}
+.btn{display:inline-block;background:var(--y);border:2px solid var(--ink);border-radius:8px;padding:11px 18px;font-weight:600;cursor:pointer;text-decoration:none;color:var(--ink);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--ink)}
+.btn.ghost{background:#fff}
+.brand{font:700 20px var(--head);background:var(--ink);color:var(--y);padding:7px 12px;border-radius:4px;white-space:nowrap}
+.err{color:var(--red);min-height:1.2em;margin:0;font-weight:500}
+#login{min-height:100vh;display:grid;place-items:center;padding:20px;background:#000}
+.lc{background:var(--bg);border:3px solid var(--y);border-radius:16px;padding:32px;width:min(380px,100%);display:grid;gap:16px}
+.lc .brand{justify-self:start}
+.lc h1{font-size:30px}
+.tb{position:sticky;top:0;z-index:5;display:flex;align-items:center;flex-wrap:wrap;gap:12px 16px;background:#000;color:#fff;padding:12px 20px;border-bottom:3px solid var(--y)}
+.tb .brand{background:none;padding:0;color:var(--y)}
+.tb span:not(.brand){opacity:.7}
+.tb .sp{flex:1}
+.tb a{color:#fff;font-size:15px}
+#save{padding:9px 16px}
+#save.dirty{animation:pl 1.4s infinite}
+@keyframes pl{50%{box-shadow:0 0 0 6px rgba(244,213,28,.45)}}
+.demo{background:var(--y);padding:8px 20px;font-size:14px;text-align:center;border-bottom:2px solid var(--ink)}
+main{max-width:920px;margin:0 auto;padding:22px 20px 80px}
+.tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.tabs button{border:2px solid var(--ink);background:#fff;border-radius:99px;padding:9px 22px;font-weight:600;cursor:pointer}
+.tabs button.on{background:var(--ink);color:var(--y)}
+.bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.bar input{flex:1 1 200px;width:auto}
+.bar select{flex:0 1 210px;width:auto}
+.row{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid var(--ink);border-radius:12px;padding:12px 14px;margin-bottom:10px;flex-wrap:wrap}
+.row.off{opacity:.55}
+.row>input{flex:1 1 160px;width:auto}
+.dm{width:30px;height:54px;flex:none;background:var(--d);border:3px solid #2a1d10;border-bottom:0;border-radius:3px 3px 0 0}
+.rn{flex:1 1 160px;min-width:0}
+.rn b{display:block}
+.rn small,.row>small{color:var(--muted)}
+.rp{display:flex;gap:8px;align-items:baseline;font-weight:600}
+.rp .red{color:var(--red)}
+.rp s{color:var(--muted);font-size:14px;font-weight:400}
+.ic{border:2px solid var(--ink);background:#fff;border-radius:8px;padding:8px 12px;cursor:pointer;font-weight:500}
+.ic:hover{background:var(--y)}
+.ic.x:hover{background:var(--red);border-color:var(--red);color:#fff}
+.empty{text-align:center;color:var(--muted);padding:40px 0}
+.card{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:22px;display:grid;gap:14px}
+.hint{color:var(--muted);font-size:14px;margin:0}
+dialog{border:3px solid var(--ink);border-radius:16px;padding:24px;width:min(520px,calc(100% - 24px));max-height:92vh;background:var(--bg)}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+dialog form{display:grid;gap:14px}
+dialog h3{font-size:28px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.col{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.col input{width:64px;height:44px;padding:2px}
+.sw{width:34px;height:34px;padding:0;border-radius:50%;border:2px solid var(--ink);background:var(--c);cursor:pointer}
+.chk{display:flex;gap:18px;flex-wrap:wrap}
+.chk label{display:flex;align-items:center;gap:8px}
+.chk input{width:20px;height:20px;padding:0}
+.act{display:flex;gap:10px;justify-content:flex-end}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,90px);background:var(--ink);color:var(--y);padding:12px 22px;border-radius:99px;font-weight:600;transition:transform .3s;z-index:30}
+#toast.on{transform:translate(-50%,0)}
+#toast.er{background:var(--red);color:#fff}
+.ph{display:flex;gap:14px;align-items:center}
+.pv{width:72px;height:96px;flex:none;border:2px dashed var(--ink);border-radius:8px;background:var(--line) center/cover no-repeat}
+.pb{display:grid;gap:8px;justify-items:start}
+.vp:empty{display:none}
+.vp video{width:100%;max-height:320px;border-radius:10px;background:#000}
+.prog{height:12px;border:2px solid var(--ink);border-radius:99px;overflow:hidden;background:#fff}
+.prog i{display:block;height:100%;width:0;background:var(--y);transition:width .2s}
+.dm.im{width:44px;border:2px solid var(--ink);border-radius:6px;background:var(--line) center/cover no-repeat}
+@media (max-width:560px){.two{grid-template-columns:1fr}.tb span:not(.brand){display:none}main{padding:16px 14px 80px}}
+</style>
+</head>
+<body>
+<div id="login"><form class="lc" id="lf">
+ <span class="brand">ФАБРИКА ДВЕРЕЙ</span><h1>Вход в админку</h1>
+ <label>Пароль<input id="pw" type="password" required autocomplete="current-password"></label>
+ <p class="err" id="le"></p>
+ <button class="btn">Войти</button>
+</form></div>
+
+<div id="app" hidden>
+ <div class="demo" id="demo" hidden>Демо-режим: сервер не подключён, изменения сохраняются только в этом браузере.</div>
+ <header class="tb"><span class="brand">ФАБРИКА ДВЕРЕЙ</span><span>админка</span><i class="sp"></i><a href="/" target="_blank" rel="noopener">На сайт ↗</a><button class="btn ghost" id="save">Сохранено ✓</button><a href="#" id="out">Выйти</a></header>
+ <main>
+  <div class="tabs"><button class="on" data-t="items">Двери</button><button data-t="cats">Категории</button><button data-t="set">Видео</button></div>
+  <section id="t-items">
+   <div class="bar"><input id="sq" type="search" placeholder="Поиск по названию"><select id="sf"></select><button class="btn" id="add">+ Добавить дверь</button></div>
+   <div id="list"></div>
+  </section>
+  <section id="t-cats" hidden>
+   <p class="hint" style="margin:0 0 14px">Категории показываются на сайте в фильтре слева. Пустые категории на сайте скрыты.</p>
+   <div id="cats"></div>
+   <form class="bar" id="ca"><input id="cn" placeholder="Новая категория, например «Скрытый монтаж»"><button class="btn">Добавить</button></form>
+  </section>
+  <section id="t-set" hidden>
+   <div class="card"><h3>Видео «Как нас найти»</h3>
+    <div class="vp" id="vp"></div>
+    <div class="bar" style="margin:0"><button class="btn" id="vb" type="button">Загрузить видео</button><button class="ic" id="vd" type="button" hidden>Убрать видео</button></div>
+    <div class="prog" id="prog" hidden><i id="pbar"></i></div>
+    <input type="file" id="vf" accept="video/mp4,video/quicktime,video/webm,.mp4,.mov,.webm" hidden>
+    <p class="hint">Файл до 100 МБ, лучше MP4 на 20–30 МБ. Снимите видео на телефон и загрузите прямо отсюда.</p>
+    <label>Или вставьте ссылку на YouTube или TikTok<input id="vu" placeholder="https://..."></label>
+   </div>
+  </section>
+ </main>
+</div>
+
+<dialog id="dlg"><form id="df">
+ <h3 id="dt">Дверь</h3>
+ <label>Название<input name="name" required></label>
+ <label>Описание<input name="desc" placeholder="Коротко: цвет, особенности"></label>
+ <div class="two"><label>Категория<select name="cat"></select></label><label>Бейдж<input name="badge" placeholder="Хит, Новинка"></label></div>
+ <div class="two"><label>Цена, руб.<input name="price" type="number" min="0" step="any" required></label><label>Старая цена<input name="old" type="number" min="0" step="any" placeholder="Для скидки"></label></div>
+ <p class="hint">Если указать старую цену (больше новой), на сайте цена станет красной, старая зачеркнётся и появится значок скидки.</p>
+ <label>Цвет двери<div class="col"><input name="color" type="color"><span class="col" id="sws"></span></div></label>
+ <div class="chk"><label><input type="checkbox" name="glass"> Со стеклом</label><label><input type="checkbox" name="wood"> Фактура дерева</label><label><input type="checkbox" name="hide"> Скрыть с сайта</label></div>
+ <div><div style="font-weight:500;font-size:15px;margin-bottom:6px">Фото двери (необязательно)</div><div class="ph"><div class="pv" id="pv"></div><div class="pb"><button type="button" class="btn ghost" id="pu">Загрузить фото</button><button type="button" class="ic" id="pd" hidden>Убрать фото</button><p class="hint">С компьютера или телефона, фото сожмётся само. Без фото на сайте рисуется дверь выбранного цвета.</p></div><input type="file" id="pf" accept="image/*" hidden><input type="hidden" name="img"></div></div>
+ <div class="act"><button type="button" class="btn ghost" id="dc">Отмена</button><button class="btn">Готово</button></div>
+</form></dialog>
+<div id="toast"></div>
+
+<script>
+var DEF={"cats":[{"id":"white","name":"Белые и светлые"},{"id":"wood","name":"Под дерево"},{"id":"dark","name":"Тёмные"}],"items":[{"id":"d0","name":"Contur KX 80","desc":"Светлый дуб, тонкий профиль","price":390,"old":450,"cat":"wood","color":"#c99a62","glass":0,"wood":1,"badge":"Хит","img":"","hide":0},{"id":"d1","name":"Contur NX 8","desc":"Венге со стеклом","price":350,"old":420,"cat":"dark","color":"#4a3426","glass":1,"wood":0,"badge":"","img":"","hide":0},{"id":"d2","name":"Минимализм","desc":"Белая, чёрная окантовка","price":460,"old":0,"cat":"white","color":"#f1efe9","glass":0,"wood":0,"badge":"","img":"","hide":0},{"id":"d3","name":"Классика","desc":"Белая с остеклением","price":420,"old":0,"cat":"white","color":"#e3dfd3","glass":1,"wood":0,"badge":"","img":"","hide":0},{"id":"d4","name":"Графит","desc":"Глубокий тёмно-серый","price":480,"old":0,"cat":"dark","color":"#3b3b3d","glass":0,"wood":0,"badge":"","img":"","hide":0},{"id":"d5","name":"Орех","desc":"Тёплый тон, матовое стекло","price":440,"old":0,"cat":"wood","color":"#a9784a","glass":1,"wood":1,"badge":"","img":"","hide":0},{"id":"d6","name":"Серый шёлк","desc":"Спокойный светло-серый","price":410,"old":0,"cat":"white","color":"#b9bcbd","glass":0,"wood":0,"badge":"","img":"","hide":0},{"id":"d7","name":"Дуб беленый","desc":"Светлое дерево, без стекла","price":430,"old":0,"cat":"wood","color":"#d9c3a0","glass":0,"wood":1,"badge":"","img":"","hide":0},{"id":"d8","name":"Премиум Венге","desc":"Шпон, скрытые петли","price":1250,"old":0,"cat":"dark","color":"#2f2118","glass":0,"wood":1,"badge":"Новинка","img":"","hide":0},{"id":"d9","name":"Классика Люкс","desc":"Двустворчатая, белая с патиной","price":1890,"old":2100,"cat":"white","color":"#f4f0e6","glass":1,"wood":0,"badge":"","img":"","hide":0}],"video":""},D=null,tok=localStorage.getItem('tok')||'',demo=false,dirty=false,cur=null;
+var $=function(i){return document.getElementById(i)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function clone(o){return JSON.parse(JSON.stringify(o))}
+function toast(m,e){var t=$('toast');t.textContent=m;t.className='on'+(e?' er':'');setTimeout(function(){t.className=''},2600)}
+function api(m,u,b){return fetch('/api/'+u,{method:m,headers:{'content-type':'application/json',authorization:'Bearer '+tok},body:b?JSON.stringify(b):undefined})}
+function mark(){var s=$('save');s.className='btn'+(dirty?' dirty':' ghost');s.textContent=dirty?'Сохранить изменения':'Сохранено ✓'}
+function touch(){dirty=true;mark()}
+function demoData(){try{return JSON.parse(localStorage.getItem('demo')||'null')}catch(e){return null}}
+
+$('lf').onsubmit=function(e){
+ e.preventDefault();$('le').textContent='';
+ api('POST','login',{password:$('pw').value})
+ .then(function(r){return r.json().then(function(j){return[r,j]},function(){return[r,null]})})
+ .then(function(x){var r=x[0],j=x[1];if(!j)throw 0;if(!r.ok){$('le').textContent=j.error||'Ошибка';return}tok=j.token;localStorage.setItem('tok',tok);start()})
+ .catch(function(){demo=true;start()});
+};
+function start(){
+ $('login').hidden=true;$('app').hidden=false;
+ if(demo)return load(demoData());
+ api('GET','catalog').then(function(r){return r.json()}).then(load).catch(function(){demo=true;load(demoData())});
+}
+function load(d){D=d&&d.items&&d.cats?d:clone(DEF);$('demo').hidden=!demo;mark();draw()}
+if(tok)start();
+
+function cname(id){var c=D.cats.filter(function(c){return c.id===id})[0];return c?c.name:'Без категории'}
+function opts(v,all){return'<option value="">'+(all?'Все категории':'Без категории')+'</option>'+D.cats.map(function(c){return'<option value="'+esc(c.id)+'"'+(c.id===v?' selected':'')+'>'+esc(c.name)+'</option>'}).join('')}
+function draw(){$('sf').innerHTML=opts($('sf').value,1);drawItems();drawCats();drawVideo()}
+function drawItems(){
+ var q=$('sq').value.trim().toLowerCase(),f=$('sf').value;
+ var l=D.items.filter(function(i){return(!f||i.cat===f)&&(!q||i.name.toLowerCase().indexOf(q)>-1)});
+ $('list').innerHTML=l.map(function(i){var s=i.old>i.price;
+  return'<div class="row'+(i.hide?' off':'')+'">'+(i.img?'<div class="dm im" style="background-image:url('+esc(i.img)+')"></div>':'<div class="dm" style="--d:'+esc(i.color)+'"></div>')+'<div class="rn"><b>'+esc(i.name)+'</b><small>'+esc(cname(i.cat))+(i.hide?' · скрыта':'')+'</small></div><div class="rp"><span'+(s?' class="red"':'')+'>'+i.price+' руб.</span>'+(s?'<s>'+i.old+'</s>':'')+'</div><button class="ic" data-e="'+esc(i.id)+'">Изменить</button><button class="ic x" data-x="'+esc(i.id)+'" aria-label="Удалить">✕</button></div>'
+ }).join('')||'<p class="empty">Ничего не найдено. Нажмите «Добавить дверь».</p>';
+}
+function drawCats(){
+ $('cats').innerHTML=D.cats.map(function(c,k){var n=D.items.filter(function(i){return i.cat===c.id}).length;
+  return'<div class="row"><input data-r="'+k+'" value="'+esc(c.name)+'" aria-label="Название категории"><small>'+n+' дв.</small><button class="ic" data-u="'+k+'" aria-label="Выше">↑</button><button class="ic x" data-d="'+k+'" aria-label="Удалить">✕</button></div>'
+ }).join('')||'<p class="empty">Категорий пока нет.</p>';
+}
+function byId(id){return D.items.filter(function(i){return i.id===id})[0]}
+
+$('sq').oninput=drawItems;$('sf').onchange=drawItems;
+$('list').onclick=function(e){
+ var b=e.target.closest('button');if(!b)return;
+ if(b.dataset.e)edit(byId(b.dataset.e));
+ if(b.dataset.x){var i=byId(b.dataset.x);if(confirm('Удалить «'+i.name+'»?')){D.items=D.items.filter(function(x){return x!==i});touch();drawItems()}}
+};
+$('add').onclick=function(){edit(null)};
+['#e9e5da','#c99a62','#4a3426','#8b8f92','#3b3b3d','#a9784a'].forEach(function(c){
+ var b=document.createElement('button');b.type='button';b.className='sw';b.style.setProperty('--c',c);b.setAttribute('aria-label',c);
+ b.onclick=function(){$('df').elements.color.value=c};$('sws').appendChild(b);
+});
+function edit(o){
+ cur=o;var f=$('df').elements;$('dt').textContent=o?'Изменить дверь':'Новая дверь';
+ f.cat.innerHTML=opts(o?o.cat:(D.cats[0]||{}).id);
+ var v=o||{name:'',desc:'',price:'',old:'',badge:'',color:'#e9e5da',glass:0,wood:0,hide:0,img:''};
+ f['name'].value=v.name;f.desc.value=v.desc||'';f.badge.value=v.badge||'';f.price.value=v.price;f.old.value=v.old||'';
+ f.color.value=v.color||'#e9e5da';f.glass.checked=!!v.glass;f.wood.checked=!!v.wood;f.hide.checked=!!v.hide;f.img.value=v.img||'';showImg(v.img);
+ $('dlg').showModal();
+}
+$('dc').onclick=function(){$('dlg').close()};
+$('df').onsubmit=function(e){
+ e.preventDefault();var f=this.elements,o=cur||{id:Math.random().toString(36).slice(2,9)};
+ o.name=f['name'].value.trim();o.desc=f.desc.value.trim();o.cat=f.cat.value;o.badge=f.badge.value.trim();
+ o.price=+f.price.value;o.old=+f.old.value||0;o.color=f.color.value;
+ o.glass=+f.glass.checked;o.wood=+f.wood.checked;o.hide=+f.hide.checked;o.img=f.img.value.trim();
+ if(!cur)D.items.unshift(o);
+ touch();drawItems();drawCats();$('dlg').close();
+};
+
+$('cats').oninput=function(e){var k=e.target.dataset.r;if(k==null)return;D.cats[k].name=e.target.value;touch()};
+$('cats').onclick=function(e){
+ var b=e.target.closest('button');if(!b)return;
+ var u=b.dataset.u,d=b.dataset.d;
+ if(u!=null&&+u>0){var t=D.cats[u];D.cats[u]=D.cats[u-1];D.cats[u-1]=t;touch();drawCats()}
+ if(d!=null){var c=D.cats[d];if(confirm('Удалить категорию «'+c.name+'»? Двери из неё останутся без категории.')){D.items.forEach(function(i){if(i.cat===c.id)i.cat=''});D.cats.splice(d,1);touch();draw()}}
+};
+$('ca').onsubmit=function(e){e.preventDefault();var v=$('cn').value.trim();if(!v)return;D.cats.push({id:'c'+Math.random().toString(36).slice(2,7),name:v});$('cn').value='';touch();draw()};
+$('vu').oninput=function(){D.video=this.value.trim();touch()};
+
+document.querySelectorAll('.tabs button').forEach(function(b){b.onclick=function(){
+ document.querySelectorAll('.tabs button').forEach(function(x){x.classList.toggle('on',x===b)});
+ ['items','cats','set'].forEach(function(t){$('t-'+t).hidden=t!==b.dataset.t});
+ if(b.dataset.t==='items')drawItems();
+}});
+
+function showImg(u){$('pv').style.backgroundImage=u?'url('+u+')':'none';$('pd').hidden=!u}
+function busy(id,t){var b=$(id);if(t){b.dataset.t=b.textContent;b.textContent=t;b.disabled=true}else{b.textContent=b.dataset.t;b.disabled=false}}
+function shrink(file,max){return new Promise(function(ok,no){
+ var img=new Image(),u=URL.createObjectURL(file);
+ img.onload=function(){var s=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');
+  c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
+  var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);
+  URL.revokeObjectURL(u);c.toBlob(function(b){b?ok(b):no(new Error('Не удалось обработать фото'))},'image/jpeg',.85)};
+ img.onerror=function(){no(new Error('Не удалось открыть фото'))};img.src=u})}
+function up(blob,type,prog){return new Promise(function(ok,no){
+ if(demo)return no(new Error('В демо-режиме загрузка недоступна: нужен подключённый сервер'));
+ var x=new XMLHttpRequest();x.open('POST','/api/upload');
+ x.setRequestHeader('content-type',type);x.setRequestHeader('authorization','Bearer '+tok);
+ x.upload.onprogress=function(e){if(e.lengthComputable&&prog)prog(Math.round(e.loaded/e.total*100))};
+ x.onload=function(){var j={};try{j=JSON.parse(x.responseText)}catch(e){}if(x.status===200&&j.url)ok(j.url);else no(new Error(j.error||'Ошибка загрузки'))};
+ x.onerror=function(){no(new Error('Нет связи с сервером'))};x.send(blob)})}
+function drawVideo(){var v=D.video||'',u=v.indexOf('/uploads/')===0;
+ $('vp').innerHTML=u?'<video src="'+esc(v)+'" controls playsinline preload="metadata"></video>':'';
+ $('vd').hidden=!v;$('vu').value=u?'':v}
+$('pu').onclick=function(){$('pf').click()};
+$('pd').onclick=function(){$('df').elements.img.value='';showImg('')};
+$('pf').onchange=function(){var file=this.files[0];this.value='';if(!file)return;
+ busy('pu','Загружаю…');
+ shrink(file,1400).then(function(b){return up(b,'image/jpeg')}).then(function(u){$('df').elements.img.value=u;showImg(u)})
+ .catch(function(e){toast(e.message||'Не удалось загрузить фото',1)}).then(function(){busy('pu')})};
+$('vb').onclick=function(){$('vf').click()};
+$('vd').onclick=function(){D.video='';touch();drawVideo()};
+$('vf').onchange=function(){var f=this.files[0];this.value='';if(!f)return;
+ var t=f.type||{mp4:'video/mp4',mov:'video/quicktime',webm:'video/webm'}[(f.name.split('.').pop()||'').toLowerCase()];
+ if(!t){toast('Нужен файл MP4, MOV или WebM',1);return}
+ if(f.size>100e6){toast('Файл больше 100 МБ',1);return}
+ busy('vb','Загружаю…');$('prog').hidden=false;
+ up(f,t,function(p){$('pbar').style.width=p+'%'}).then(function(u){D.video=u;touch();drawVideo();toast('Видео загружено. Нажмите «Сохранить»')})
+ .catch(function(e){toast(e.message||'Не удалось загрузить видео',1)}).then(function(){busy('vb');$('prog').hidden=true;$('pbar').style.width='0'})};
+$('save').onclick=function(){
+ if(demo){localStorage.setItem('demo',JSON.stringify(D));dirty=false;mark();toast('Сохранено (демо)');return}
+ api('PUT','catalog',D).then(function(r){
+  if(r.status===401){localStorage.removeItem('tok');location.reload();return}
+  if(!r.ok)throw 0;dirty=false;mark();toast('Сохранено. Сайт обновлён');
+ }).catch(function(){toast('Не удалось сохранить',1)});
+};
+$('out').onclick=function(e){e.preventDefault();localStorage.removeItem('tok');location.reload()};
+window.onbeforeunload=function(){if(dirty)return'Есть несохранённые изменения'};
+</script>
+</body>
+</html>
